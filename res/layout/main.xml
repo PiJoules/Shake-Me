@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_gravity="center_vertical">
+    <TextView
+        android:id="@+id/xAccel"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="dx: 0">
+    </TextView>
+    <TextView
+        android:id="@+id/yAccel"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="dy: 0">
+    </TextView>
+    <TextView
+        android:id="@+id/zAccel"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="dz: 0">
+    </TextView>
+    <TextView
+        android:id="@+id/noise"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="noise: 0">
+    </TextView>
+</LinearLayout>
+
