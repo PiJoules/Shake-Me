@@ -3,30 +3,37 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:layout_gravity="center_vertical">
+    android:padding="5dp">
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/settings"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentLeft="true">
+        </ImageView>
+        <ImageView
+            android:id="@+id/play"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentRight="true">
+        </ImageView>
+    </RelativeLayout>
     <TextView
-        android:id="@+id/xAccel"
+        android:id="@+id/shake"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="dx: 0">
+        android:text="Shake"
+        android:textSize="30sp"
+        android:gravity="center"
+        android:layout_marginTop="10dp">
     </TextView>
-    <TextView
-        android:id="@+id/yAccel"
+    <WebView
+        android:id="@+id/web"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="dy: 0">
-    </TextView>
-    <TextView
-        android:id="@+id/zAccel"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="dz: 0">
-    </TextView>
-    <TextView
-        android:id="@+id/noise"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="noise: 0">
-    </TextView>
+        android:gravity="center">
+    </WebView>
 </LinearLayout>
 

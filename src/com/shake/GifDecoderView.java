@@ -45,6 +45,7 @@ public class GifDecoderView extends ImageView {
     
     public void init(InputStream input){
         this.stream = input;
+        System.out.println(input.toString());
     }
     
     public void playGif(){
