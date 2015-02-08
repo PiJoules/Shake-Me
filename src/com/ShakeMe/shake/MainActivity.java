@@ -1,4 +1,4 @@
-package com.BatmanOnDrugs.shake;
+package com.ShakeMe.shake;
 
 import android.app.Activity;
 import android.content.Context;
