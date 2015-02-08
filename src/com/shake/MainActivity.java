@@ -1,117 +1,70 @@
 package com.shake;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
 import android.webkit.WebSettings.LayoutAlgorithm;
 import android.webkit.WebView;
-import android.widget.ImageView;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 
-public class MainActivity extends Activity implements SensorEventListener{
+public class MainActivity extends Activity implements SensorEventListener, OnSeekBarChangeListener{
     
+    private SeekBar bar; // seekbar for controlling sensitivity
+    private TextView sensitivity;
+    
+    // MediaPlayer controls playing the mp3
     private MediaPlayer mp;
     private boolean playing = false;
     
-    //private TextView xtv,ytv,ztv,noisetv;
-    private TextView shake;
-    //public GifDecoderView view;
+    // Display the gif in a webview for simplicity
     private WebView wv;
-    private ImageView settings, play;
-    ProgressDialog progress;
     
-    private final int SEARCH_IDENTIFIER = 0;
-    private final String SEARCH = "SEARCH";
-    
+    // Stuff for detecting shakes
     private SensorManager sm;
     private Sensor accel;
     private float xAccel, yAccel, zAccel;
-    private boolean initialized = false, playButtonPressed = false;
-    private final double NOISE = 9.0;
-    private final double SMALLNOISE = NOISE/2;
+    private boolean initialized = false;
+    private double NOISE = 5.0;
     private ArrayList<Double> previousNoise;
     private final int MAXNOISECOUNT = 3;
     
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        setTitle("Shake");
+        
+        bar = (SeekBar)findViewById(R.id.seekBar);
+        bar.setOnSeekBarChangeListener(this);
+        sensitivity = (TextView) findViewById(R.id.sensitivity);
         
         sm = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         accel = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         sm.registerListener(this, accel, SensorManager.SENSOR_DELAY_NORMAL);
         
-        //view = new GifDecoderView(this);
-        //setContentView(view);
-        //view.hideGif();
-        
         mp = MediaPlayer.create(this, R.raw.batman_on_drugs);
-        //mp.setVolume(0, 0); // mute mp (for testing)
+        mp.setVolume(1.0f, 1.0f);
         
         // setup the webview
         wv = (WebView) findViewById(R.id.web);
-        wv.getSettings().setJavaScriptEnabled(true);
-        setFilePath("file:///sdcard/download/3009sw7sw7yu.gif");
+        String html = "<html><body style = 'background:black;'><img src = 'file:///android_res/raw/batman.gif' style = 'width:100%;'></body></html>";
+        wv.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
         wv.getSettings().setLayoutAlgorithm(LayoutAlgorithm.SINGLE_COLUMN);
         wv.setVisibility(View.INVISIBLE);
-        
-        // setup the buttons
-        settings = (ImageView) findViewById(R.id.settings);
-        settings.setImageResource(R.raw.settings_gear);
-        settings.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent fe = new Intent(getApplicationContext(), FileExplorer.class);
-                startActivityForResult(fe, SEARCH_IDENTIFIER);
-            }
-        });
-        play = (ImageView) findViewById(R.id.play);
-        play.setImageResource(R.raw.play);
-        play.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                if (!playButtonPressed && !playing){
-                    playGif();
-                    playButtonPressed = true;
-                }
-                else if (playButtonPressed && !playing){
-                    stopGif();
-                    playButtonPressed = false;
-                }
-            }
-        });
-        
-        
-        shake = (TextView) findViewById(R.id.shake);
-        
+                
         previousNoise = new ArrayList<Double>();
-    }
-    
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data){
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == SEARCH_IDENTIFIER && resultCode == Activity.RESULT_OK){
-            String file = data.getStringExtra(SEARCH);
-            if (file.endsWith(".gif")){
-                setFilePath("file://" + file);
-            }
-            else if (file.endsWith(".mp3")) {
-                mp = MediaPlayer.create(this, Uri.parse("file://" + file));
-            }
-        }
     }
     
     @Override
@@ -126,25 +79,15 @@ public class MainActivity extends Activity implements SensorEventListener{
         sm.unregisterListener(this);
     }
     
-    private void setFilePath(String path){
-        String html = "<html><body style = 'background:black;'><img src = '" + path + "' style = 'width:100%;'></body></html>";
-        wv.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
-    }
-    
     private void playGif(){
         mp.start();
         mp.setLooping(true);
-        //view.showGif();
-        //setContentView(view);
-        //setContentView(wv);
         wv.setVisibility(View.VISIBLE);
     }
     
     private void stopGif(){
         mp.pause();
         mp.seekTo(mp.getCurrentPosition());
-        //view.hideGif();
-        //setContentView(R.layout.main);
         wv.setVisibility(View.INVISIBLE);
     }
 
@@ -165,10 +108,10 @@ public class MainActivity extends Activity implements SensorEventListener{
             yAccel = event.values[1];
             zAccel = event.values[2];
             previousNoise.add(noiseVector);
-            if (previousNoise.size() > MAXNOISECOUNT){
+            while (previousNoise.size() > MAXNOISECOUNT){
                 previousNoise.remove(0);
             }
-            if (previousNoise.size() == MAXNOISECOUNT && !playing && !playButtonPressed){
+            if (previousNoise.size() == MAXNOISECOUNT && !playing){
                 double sum = 0;
                 for (int i = 0; i < MAXNOISECOUNT; i++) sum += previousNoise.get(i);
                 if (sum/MAXNOISECOUNT > NOISE){
@@ -176,7 +119,7 @@ public class MainActivity extends Activity implements SensorEventListener{
                     playing = true;
                 }
             }
-            else if (playing && !playButtonPressed){
+            else if (playing){
                 double sum = 0;
                 for (int i = 0; i < MAXNOISECOUNT; i++) sum += previousNoise.get(i);
                 if (sum/MAXNOISECOUNT < NOISE){
@@ -190,6 +133,22 @@ public class MainActivity extends Activity implements SensorEventListener{
     }
 
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        
+    }
+    
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        sensitivity.setText("Sensitivity (" + progress + ")");
+        NOISE = (10-progress);
+    }
+    
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+        
+    }
+    
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
         
     }
 }

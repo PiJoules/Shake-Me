@@ -6,34 +6,48 @@
     android:padding="5dp">
     <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
-        <ImageView
-            android:id="@+id/settings"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_alignParentLeft="true">
-        </ImageView>
-        <ImageView
-            android:id="@+id/play"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_alignParentRight="true">
-        </ImageView>
+        android:layout_height="fill_parent"
+        android:paddingTop="10dp">
+        <TextView
+            android:id="@+id/shake"
+            android:layout_alignParentTop="true"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Shake me"
+            android:textSize="30sp"
+            android:gravity="center">
+        </TextView>
+        <WebView
+            android:id="@+id/web"
+            android:layout_below="@+id/shake"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+        </WebView>
+        <SeekBar
+            android:id="@+id/seekBar"
+            android:layout_width="fill_parent"
+            android:paddingTop="10px" 
+            android:paddingBottom="10px" 
+            android:paddingLeft="30px" 
+            android:paddingRight="30px" 
+            android:minHeight="6dip"
+            android:maxHeight="6dip" 
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentBottom="true"
+            android:max="10"
+            android:progress="5">
+        </SeekBar>
+        <TextView
+            android:id="@+id/sensitivity"
+            android:layout_alignParentBottom="true"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Sensitivity (5)"
+            android:textSize="15sp"
+            android:gravity="center">
+        </TextView>
     </RelativeLayout>
-    <TextView
-        android:id="@+id/shake"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="Shake"
-        android:textSize="30sp"
-        android:gravity="center"
-        android:layout_marginTop="10dp">
-    </TextView>
-    <WebView
-        android:id="@+id/web"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center">
-    </WebView>
 </LinearLayout>
 
